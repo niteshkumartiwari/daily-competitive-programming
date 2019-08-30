@@ -20,167 +20,56 @@ Output: ..RR.LL..RR
 #include <deque>
 #include <utility>
 #include <iterator>
+#include <limits>
+#include <algorithm>
 
 #define ll long long
 using namespace std;
 
-void findFinalState(string dominos) {
-	deque<pair<char, int>> dq;
-
-	bool flag = false;//false- R | true-L
-	for (int i = 0; i < dominos.length(); i++) {
-		if (dominos[i] != '.')
-			dq.push_back({ dominos[i],i });
+string findDominos(string dominoes) {
+	int n = dominoes.length();
+	int forces[1000] = { 0 };
+	int force = 0;
+	for (int i = 0; i < n; i++) {
+		if (dominoes[i] == 'R')
+			force = n;
+		else if (dominoes[i] == 'L')
+			force = 0;
+		else 
+			force = max(force - 1, 0);
+		
+		forces[i] += force;
 	}
 
-	if (dq.size() == 0) {
-		cout << dominos;
-		return;
+	force = 0;
+	for (int i = n - 1; i >= 0; i--) {
+		if (dominoes[i] == 'L')
+			force = n;
+		else if (dominoes[i] == 'R')
+			force = 0;
+		else
+			force = max(force - 1, 0);
+
+		forces[i] -= force;
 	}
 
-	if (dq.size() == 1) {
-		int idx = 0;
-
-		if (dq.front().first == 'L') {
-			int i;
-			for (i = 0; i <= dq.front().second; i++)
-				cout << 'L';
-			while (i < dominos.length()) {
-				cout << '.';
-				i++;
-			}
-
-			return;
-		}
-		else {
-			int i = 0;
-			for (i = 0; i < dq.front().second; i++)
-				cout << '.';
-			cout << 'R';
-			i++;
-			while (i < dominos.length()) {
-				cout << '.';
-				i++;
-			}
-			return;
-
-		}
+	string res;
+	for (int i = 0; i < n; i++) {
+		if (forces[i] > 0)
+			res += 'R';
+		else if (forces[i] < 0)
+			res += 'L';
+		else
+			res += '.';
 	}
 
-	if (dq.front().first == 'L') {
-		int i = 0;
-		while (i < dq.front().second) {
-			cout << 'L';
-			i++;
-		}
-	}
-	else {// if its . or R
-		int i = 0;
-		while (i < dq.front().second) {
-			cout << '.';
-			i++;
-		}
-	}
-
-	char fchar, schar;
-	int fidx, sidx;
-	while (dq.size() >= 2) {
-		fchar = dq.front().first;
-		fidx = dq.front().second;
-		dq.pop_front();
-		schar = dq.front().first;
-		sidx = dq.front().second;
-		dq.pop_front();
-
-		int l = fidx + 1;
-		int r = sidx - 1;
-		int mid = (l + r) / 2;
-
-		if (fchar == 'R' && schar == 'L') {
-			if (r-l == 1)
-				cout << '.';
-			else if ((r-l) % 2 == 0) {//#of dots is odd then mid will be '.'
-				int i = fidx;
-				while (i < mid) {
-					cout << 'R';
-					i++;
-				}
-				cout << '.';
-				i++;
-				while (i <= r) {
-					cout << 'L';
-					i++;
-				}
-
-			}
-			else if ((l - r) % 2 != 0) {//even #of dots, no dots 
-				int i = fidx;
-				while (i <= mid) {
-					cout << 'R';
-					i++;
-				}
-
-				while (i <= r) {
-					cout << 'L';
-					i++;
-				}
-			}
-		}
-
-		else if (fchar == 'L' && schar == 'R') {
-			int i = fidx;
-			cout << 'L';
-			i++;
-			while (i <= r) {
-				cout << '.';
-				i++;
-			}
-		}
-
-		else if (fchar == 'L' && schar == 'L') {
-			int i = fidx;
-			while (i <= r) {
-				cout << 'L';
-				i++;
-			}
-		}
-
-		else if (fchar == 'R' && schar == 'R') {
-			int i = fidx;
-			while (i <= r) {
-				cout << 'R';
-				i++;
-			}
-		}
-
-		if (dq.size() == 0)
-			break;
-		dq.push_front({ schar,sidx });
-	}
-
-	if (schar == 'R') {
-		int i = sidx;
-		while (i < dominos.length()) {
-			cout << 'R';
-			i++;
-		}
-	}
-	else {
-		int i = sidx;
-		cout << 'L';
-		i++;
-		while (i < dominos.length()) {
-			cout << '.';
-			i++;
-		}
-	}
+	return res;
 }
 
 int main() {
-	string dominos;
-	cin >> dominos;
-
-	findFinalState(dominos);
+	string str;
+	cin >> str;
+	cout << findDominos(str);
 
 	return 0;
 }
