@@ -12,7 +12,6 @@ Figure out the final position of the dominoes. If there are dominoes that get pu
 Example:
 Input:  ..R...L..R.
 Output: ..RR.LL..RR
-
 */
 
 #include <iostream>
