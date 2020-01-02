@@ -12,125 +12,63 @@ Figure out the final position of the dominoes. If there are dominoes that get pu
 Example:
 Input:  ..R...L..R.
 Output: ..RR.LL..RR
-
 */
 
-#include "bits/stdc++.h"
+#include <iostream>
+#include <string>
+#include <deque>
+#include <utility>
+#include <iterator>
+#include <limits>
+#include <algorithm>
+
 #define ll long long
 using namespace std;
 
-void findFinalState(string dominos){
-	deque<pair<char,int>> dq;
-
-	bool flag=false;//false- R | true-L
-	for(int i=0;i<dominos.length();i++){
-		if(dominos[i]!='.')
-			dq.push_back({dominos[i],i});
+string findDominos(string dominoes) {
+	int n = dominoes.length();
+	int forces[1000] = { 0 };
+	int force = 0;
+	for (int i = 0; i < n; i++) {
+		if (dominoes[i] == 'R')
+			force = n;
+		else if (dominoes[i] == 'L')
+			force = 0;
+		else 
+			force = max(force - 1, 0);
+		
+		forces[i] += force;
 	}
 
-	if(dq.size()==0){
-		cout<<dominos;
-		return;
+	force = 0;
+	for (int i = n - 1; i >= 0; i--) {
+		if (dominoes[i] == 'L')
+			force = n;
+		else if (dominoes[i] == 'R')
+			force = 0;
+		else
+			force = max(force - 1, 0);
+
+		forces[i] -= force;
 	}
 
-	if(dq.front().first=='L'){
-		int i=0;
-		while(i < dq.front().second){
-			cout<<'L';
-			i++;
-		}
-	}
-	else{// if its . or R
-		int i=0;
-		while(i < dq.front().first){
-			cout<<'.';
-		}
+	string res;
+	for (int i = 0; i < n; i++) {
+		if (forces[i] > 0)
+			res += 'R';
+		else if (forces[i] < 0)
+			res += 'L';
+		else
+			res += '.';
 	}
 
-	pair<char,int> f,s;
-	while(dq.size()>=2){
-		f = dq.pop_front();
-		s = dq.pop_front();
-
-		int l = f.second +1;
-		int r = s.second -1;
-		int mid = (l+r)/2;
-
-		if(f.first == 'R' && s.first =='L'){
-			if(l-r ==1)
-				cout<<'.';
-			else if((l-r)%2 == 0){//#of dots is odd then mid will be '.'
-				int i=l;
-				while(i<mid){
-					cout<<'R';
-					i++;
-				}
-				cout<<'.';
-				i++;
-				while(i<r){
-					cout<<'L';
-					i++;
-				}
-
-			}
-			else if((l-r)%2 != 0){//even #of dots, no dots 
-				int i=l;
-				while(i<= mid){
-					cout<<'R';
-					i++;
-				}
-
-				while(i<r){
-					cout<<'L';
-					i++;
-				}
-			}
-		}
-
-		else if(f.first=='L' && s.first=='R'){
-			int i=l;
-			while(i<r)
-				cout<<'.';
-		}
-
-		else if(f.first=='L' && s.first=='L'){
-			int i=l;
-			while(i<r)
-				cout<<'L';
-		}
-
-		else if(f.first=='R' && s.first=='R'){
-			int i=l;
-			while(i<r)
-				cout<<'R';
-		}
-
-		if(dq.size()==0)
-			break;
-		dq.push_front(s);
-	}
-
-	if(s.first =='R'){
-		int i=s.second;
-		while(i<dominos.length()){
-			cout<<'R';
-			i++;
-		}
-	}
-	else{
-		int i=s.second;
-		while(i<dominos.length()){
-			cout<<'L';
-			i++;
-		}
-	}
+	return res;
 }
 
-int main(){
-	string dominos;
-	cin>>dominos;
-
-	findFinalState(dominos);
+int main() {
+	string str;
+	cin >> str;
+	cout << findDominos(str);
 
 	return 0;
 }
