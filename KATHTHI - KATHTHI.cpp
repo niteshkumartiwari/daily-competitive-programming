@@ -56,7 +56,7 @@ int bfs() {
     }
 
     return dp[r - 1][c - 1];
-}  //O(E+V)
+}  // O(E+V)
 
 int main() {
     int t, n;
