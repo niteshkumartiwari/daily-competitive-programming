@@ -6,7 +6,7 @@ using namespace std;
 
 vector<int> getZarray(string str) {
     int n = str.length();
-    vector<int> zarray(n, 0);
+    vector<int> zarray(n, 0);//longest prefix substring starting at i
     int left = 0, right = 0;
     for (int i = 1; i < n; i++) {
         if (i > right) {
