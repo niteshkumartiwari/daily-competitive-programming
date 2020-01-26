@@ -11,7 +11,7 @@ int solve(vector<int> &A) {
     int n = A.size();
     vector<vector<int>> dp(n, vector<int>(n, INT_MAX));
     /*
-        dp[i][j]=min coins cost to cut trees in [i,j+1]
+        dp[i][j]=min coins cost to cut trees in [i,j]
         i-1,i,i+1......k-1,k,k+1......j-1,j,j+1
     */
     n -= 2;
