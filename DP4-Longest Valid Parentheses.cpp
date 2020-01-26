@@ -5,6 +5,7 @@ Given a string containing just the characters '(' and ')', find the length of th
 #define ll long long
 using namespace std;
 
+//Approach 1:
 class Solution {
    public:
     int longestValidParentheses(string s) {
@@ -29,6 +30,29 @@ class Solution {
         return currMax;
     }
 };
+
+//Approach 2
+
+int longestValidParentheses(string A) {
+    int n = A.length();
+    stack<int> st;
+    int len = 0;
+    st.push(-1);
+
+    for (int i = 0; i < n; i++) {
+        if (A[i] == '(')
+            st.push(i);
+        else {
+            st.pop();
+            if (!st.empty())
+                len = max(len, i - st.top());
+            else
+                st.push(i);
+        }
+    }
+
+    return len;
+}
 
 int main() {
     return 0;
