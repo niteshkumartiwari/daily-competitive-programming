@@ -75,3 +75,14 @@ class Solution {
 int main() {
     return 0;
 }
+
+/*
+->The number of stones reduces K - 1 after merging K stones.
+If (len(stones) - 1) % (K - 1) != 0, it is impossible to merge them into 1 pile.
+->reverse thinking + DP
+1.The minimum cost to merge stones[i .. j] into 1 pile equals to
+2.the minimum cost to merge stones[i .. j] into K piles + sum(nums[i .. j])
+3.The minimum cost to merge stones[i .. j] into K piles equals to
+the minimum cost to make stones[i .. k] form 1 pile ((k - i) % (K - 1) == 0)
+plus the minimum cost to merge stones[k + 1 .. j] into (K - 1) piles
+*/
