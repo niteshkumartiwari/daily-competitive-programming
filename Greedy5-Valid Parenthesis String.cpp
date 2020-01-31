@@ -19,8 +19,8 @@ Note:
 The string size will be in the range [1, 100].
 */
 
-#include<bits/stdc++.h>
-using namespace std;    
+#include <bits/stdc++.h>
+using namespace std;
 
 //Approach1 : Two-Pass
 /*
@@ -31,18 +31,22 @@ The first and second loop logic combine together and say we have enough '(', ')'
 '(' and ')' parens.
 */
 class Solution {
-public:
+   public:
     bool checkValidString(string s) {
-        int bal=0;
-        for(int i=0;i<s.length();i++){
-            if(s[i]=='(' || s[i]=='*')bal++;
-            else if(bal--==0) return false;
+        int bal = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s[i] == '(' || s[i] == '*')
+                bal++;
+            else if (bal-- == 0)
+                return false;
         }
-        if(bal==0)return true;
-        bal=0;
-        for(int i=s.length()-1;i>=0;i--){
-            if(s[i]==')' || s[i]=='*')bal++;
-            else if(bal--==0) return false;
+        if (bal == 0) return true;
+        bal = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s[i] == ')' || s[i] == '*')
+                bal++;
+            else if (bal-- == 0)
+                return false;
         }
 
         return true;
@@ -51,46 +55,41 @@ public:
 
 //Approach 2: One-Pass
 /*
-low : take '*' as ')', if there are some '(' not matched
-high : take '*' as '('
+Let diff be count of left parenthesis minus count of right parenthesis.
 
-if high < 0 means too much ')'
-if low > 0 , after the count finished, means too much '('
+When we meet:
 
-since low take '*' as ')', there might be too much ')', so that low might less than 0. That's why low-- should happen only low>0. This can thought as, low only take as much as '(''s ')' and ignore other ')' s. This will not cause problem since :
+(, we increment diff.
+), we decrement diff.
+*, we have three choices which makes the diff become a range -- [diff - 1, diff + 1].
+So we use maxDiff/minDiff to record the maximum/minimum diff we can get.
 
-'*' can be treated as empty
-high has deal with the situation that too much ')' exist
+When we meet:
+
+(, ++maxDiff and ++minDiff.
+), --maxDiff and --minDiff.
+*, ++maxDiff and --minDiff.
+If maxDiff become negative, it means it's already invalid, we should return false.
+
+Whenever minDiff falls below 0, we should force it to be 0 because we never accept negative diff during the process.
+
+After scanning through string s, as long as minDiff is 0, this string can be a valid one.
 */
 
 class Solution {
-public:
+   public:
     bool checkValidString(string s) {
-        int low=0,high=0;
-
-        for(int i=0;i<s.length();i++){
-            if(s[i]=='('){
-                low++;
-                high++;
-            }
-            else if(s[i]==')'){
-                if(low>0)low--;
-                high--;
-            }
-            else{
-                if(low>0)low--;
-                high++;
-            }
-            if(high<0)
-                return false;
+        int maxDiff = 0, minDiff = 0;
+        for (char c : s) {
+            maxDiff += (c == '(' || c == '*') ? 1 : -1;
+            minDiff += (c == ')' || c == '*') ? -1 : 1;
+            if (maxDiff < 0) return false;
+            minDiff = max(0, minDiff);
         }
-
-        return low==0;
+        return minDiff == 0;
     }
 };
 
-int main(){
-
-
+int main() {
     return 0;
 }
