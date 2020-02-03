@@ -33,47 +33,47 @@ Explanation 2:
     Increase 2nd element once and fourth and last element 2 times.
 */
 
-#include<bits/stdc++.h>
-using namespace std;   
+#include <bits/stdc++.h>
+using namespace std;
 
 typedef long long ll;
 
-bool check(vector<int> &A,ll x, ll k){
-    ll moves=0;
-    int n=A.size();
-    for(int i=n/2;i<n;i++){//increasing all the right half elems < x to x
-        if(x-A[i] >0)moves+=x-A[i];
-        if(moves > k) return false;
+//Can be done using binary search Q*logk*logn
+bool check(vector<int> &A, ll x, ll k) {
+    ll moves = 0;
+    int n = A.size();
+    for (int i = n / 2; i < n; i++) {  //increasing all the right half elems < x to x
+        if (x - A[i] > 0) moves += x - A[i];
+        if (moves > k) return false;
     }
 
-    if(moves<=k) return true;
+    if (moves <= k) return true;
     return false;
 }
 
-string solve(vector<int> &A, string B) {
-    int n=A.size();
-    ll k= stoll(B);
+string solve(vector<int> &A, string B) {  //nlogk
+    int n = A.size();
+    ll k = stoll(B);
 
-    ll l=A[n/2], r= A[n/2]+k;
-    ll ans=l;
+    ll l = A[n / 2], r = A[n / 2] + k;
+    ll ans = l;
 
-    while(l<=r){//nlogn
-        ll mid= l +(r-l)/2;
+    while (l <= r) {
+        ll mid = l + (r - l) / 2;
 
-        if(check(A,mid,k))
-            l=mid+1,ans=mid;
+        if (check(A, mid, k))
+            l = mid + 1, ans = mid;
         else
-            r=mid-1;
-
+            r = mid - 1;
     }
 
     return to_string(ans);
 }
 
-int main(){
+int main() {
     vector<int> A{2, 2, 4, 5, 6, 6, 7, 8, 8, 9, 9, 10, 11, 11, 12, 15, 15, 16, 17, 18, 20};
-    string B="3";
-    cout<<solve(A,B);
+    string B = "3";
+    cout << solve(A, B);
 
     return 0;
 }
