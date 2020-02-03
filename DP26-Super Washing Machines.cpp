@@ -59,12 +59,12 @@ class Solution {
             int r = (n - i - 1) * avg - (sum[n] - sum[i] - machines[i]);
 
             if (l > 0 && r > 0)  //both need more, any we can only give one at a time
-                res += l + r;
+                res = max(res, l + r);
             else if (l < 0 && r < 0)  //both have extra-contained & we can import from both at the same time
-                res += max(abs(l), abs(r));
+                res = max(res, max(abs(l), abs(r)));
             else {  // (l > 0 && r < 0) || (l < 0 && r > 0)
-                    //the larger size we contribute towards overall import/export
-                res += max(abs(l), abs(r));
+                //the larger size we contribute towards overall import/export
+                res = max(res, max(abs(l), abs(r)));
             }
         }
 
