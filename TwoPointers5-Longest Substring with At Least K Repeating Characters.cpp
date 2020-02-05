@@ -62,7 +62,9 @@ public:
                         unique--;
                     i++;
                 }
-
+                
+                // if we found a string where the number of unique chars equals our target
+                // and all those chars are repeated at least K times then update max
                 if(unique==ch && unique==charsGreatThanEqtoK)
                     res=max(res,j-i);
             }
