@@ -45,6 +45,8 @@ class Solution {
             auto [u, mask] = q.front();
             q.pop();
 
+            if (mask == (1 << n) - 1) return dp[u][mask];
+
             for (auto v : graph[u]) {
                 int nextMask = mask | 1 << v;
                 if (dp[v][nextMask] > dp[u][mask] + 1) {
