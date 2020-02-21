@@ -62,27 +62,38 @@ Regular Expression II
 Implement regular expression matching with support for '.' and '*'. '.' Matches any single character. '*' Matches zero or more of the preceding element. The matching should cover the entire input string (not partial).
 */
 
-int isMatch(const string s, const string p) {
-    int n = s.length();
-    int m = p.length();
+bool isMatch(const string& text, const string& pattern) {
+    int i = 0;
+    string pat = "";
+    while (i < pattern.length()) {
+        if (pattern[i] == '*') {
+            pat += pattern[i++];
+            while (i < pattern.length() && pattern[i] == '*') i++;
+        } else
+            pat += pattern[i++];
+    }
 
-    bool dp[n + 1][m + 1];
-    /*
-        dp[i][j]:=does s[0.....i] match with p[0.....j]
-    */
-    memset(dp, false, sizeof dp);
+    cout << pat << endl;
+
+    int n = text.length(), m = pat.length();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, false));
+    //dp[i][j]:= is text[0...i-1] and pat[0...j-1] is a match
+
     dp[0][0] = true;
+    for (int i = 1; i <= m; i++) {
+        if (pat[i - 1] == '*')
+            dp[0][i] = dp[0][i - 2];
+    }
 
-    for (int i = 0; i <= n; i++) {
-        for (int j = 0; j <= m; j++) {
-            if (s[i - 1] == p[j - 1] || p[j - 1] == '.')
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (text[i - 1] == pat[j - 1] || pat[j - 1] == '.')
                 dp[i][j] = dp[i - 1][j - 1];
-            else if (p[j - 1] == '*') {        //p=abcd* dekhna hai?
-                dp[i][j] = dp[i][j - 2];       //p=abc match tha kya
-                if (s[i - 1] == p[j - 2])      //s=abc p=abc*
-                    dp[i][j] |= dp[i - 1][j];  //s=ab p=abc* matched char ko hata //ke math tha kya
-            } else
-                dp[i][j] = false;
+            else if (pat[j - 1] == '*') {
+                dp[i][j] = dp[i][j - 2];  //don't insert
+                if (text[i - 1] == pat[j - 2] || pat[j - 2] == '.')
+                    dp[i][j] |= dp[i - 1][j];
+            }
         }
     }
 
