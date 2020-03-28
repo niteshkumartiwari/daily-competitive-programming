@@ -1,5 +1,5 @@
 /*
-sparse table method supports query operation in O(1) time with O(n Log n) preprocessing time and O(n Log n) space.
+Sparse table method supports query operation in O(1) time with O(n Log n) preprocessing time and O(n Log n) space.
 */
 #include <bits/stdc++.h>
 #define ll long long
@@ -30,8 +30,11 @@ void preprocess(vector<int> A) {
 
 int query(vector<int> A, int l, int r) {
     int n = A.size();
+    //[2,10]
     int j = log2(r - l + 1);
+    //j= log2(9)=3
 
+    // A[dp[2][3]] < A[dp[2+9-8][3]]
     if (A[dp[l][j]] < A[dp[l + (r - l + 1) - (1 << j)][j]])
         return A[dp[l][j]];
     else
