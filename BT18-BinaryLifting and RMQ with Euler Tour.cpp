@@ -220,3 +220,100 @@ int main() {
 
     return 0;
 }
+
+//Range Minimum Query with Euler Tour
+
+vector<int> adj[100009];
+vector<int> euler;
+vector<int> level;
+vector<int> depthArr;
+vector<int> FO;
+int maxDepth;
+int dp[100009][20];
+int ptr;
+
+void dfs(int u, int depth) {  //O(N)
+    if (FO[u] == -1) FO[u] = ptr;
+    level[u] = depth;
+    euler.push_back(u);
+    ptr++;
+    maxDepth = max(maxDepth, depth);
+
+    for (auto v : adj[u]) {
+        dfs(v, depth + 1);
+        euler.push_back(u);
+        ptr++;
+    }
+}
+
+void preprocessing() {  //O(NlogN)
+    int n = euler.size();
+    memset(dp, -1, sizeof dp);
+    //dp[i][j]:= idx of lca between i to 2^j= with depthArr min between [i,j]
+
+    for (int x : euler)
+        depthArr.push_back(level[x]);
+
+    for (int i = 1; i < n; i++)
+        dp[i - 1][0] = (depthArr[i] > depthArr[i - 1]) ? i - 1 : i;
+
+    for (int l = 1; l < 20; l++) {
+        for (int i = 0; i < n; i++) {
+            if (dp[i][l - 1] != -1 && dp[i + (1 << (l - 1))][l - 1] != -1)
+                dp[i][l] = (depthArr[dp[i][l - 1]] > depthArr[dp[i + (1 << (l - 1))][l - 1]]) ? dp[i + (1 << (l - 1))][l - 1] : dp[i][l - 1];
+            else
+                break;
+        }
+    }
+}
+
+int query(int l, int r) {
+    int d = r - l;
+    int dx = log2(d);
+
+    if (l == r) return l;
+
+    if (depthArr[dp[l][dx]] > depthArr[dp[r - (1 << dx)][dx]])
+        return dp[r - (1 << dx)][dx];
+    else
+        return dp[l][dx];
+}
+
+int LCA(int u, int v) {
+    if (u == v) return u;
+    if (FO[u] > FO[v]) swap(u, v);
+
+    return euler[query(FO[u], FO[v])];
+}
+
+void setDS() {
+    euler.clear();
+    depthArr.clear();
+    level.clear();
+    FO.clear();
+
+    level.resize(100009, 0);
+    FO.resize(100009, -1);
+    maxDepth = 0;
+    ptr = 0;
+
+    for (int i = 0; i < 100009; i++)
+        adj[i].clear();
+}
+
+int solve(vector<int>& A, vector<int>& B) {
+    setDS();
+
+    for (int i = 0; i < A.size(); i++)
+        adj[A[i]].push_back(i + 1);
+
+    dfs(0, 0);
+
+    preprocessing();
+
+    int lca = B[0];
+    for (int i = 1; i < B.size(); i++)
+        lca = LCA(lca, B[i]);
+
+    return lca;
+}
