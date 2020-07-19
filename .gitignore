@@ -2,3 +2,4 @@
 .vscode
 .vs
 test.cpp
+*.pdf
