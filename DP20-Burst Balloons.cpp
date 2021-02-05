@@ -51,6 +51,9 @@ int solve(vector<int> &A) {
 }
 
 int main() {
+    vector<int> A{4, 2, 6, 7};
+    cout << "ans is" << endl;
+    cout << solve(A);
     return 0;
 }
 
