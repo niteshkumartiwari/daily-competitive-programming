@@ -25,8 +25,91 @@ input: [[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
 subarray after step 1: [[7,0], [7,1]]
 subarray after step 2: [[7,0], [6,1], [7,1]]
 */
+//============== O(NlogN)==============
+class SegmentTree {
+   public:
+    int N;
+    vector<int> segmentTree;
 
-class Solution {  //O(nlogn)
+    SegmentTree(int N) {
+        this->N = N;
+        this->segmentTree.resize(4 * N, 0);
+
+        buildSegmentTree(1, 0, N - 1);
+    }
+
+    void buildSegmentTree(int idx, int l, int r) {
+        if (l == r) {
+            segmentTree[idx] = 1;
+            return;
+        }
+
+        int mid = l + (r - l) / 2;
+
+        buildSegmentTree(2 * idx, l, mid);
+
+        buildSegmentTree(2 * idx + 1, mid + 1, r);
+
+        //Core-logic for merge : TO-DO
+        segmentTree[idx] = segmentTree[2 * idx] + segmentTree[2 * idx + 1];
+    }
+
+    int query(int idx, int l, int r, int val) {
+        if (l == r)
+            return l;
+
+        int mid = l + (r - l) / 2;
+
+        if (val <= segmentTree[2 * idx])
+            return query(2 * idx, l, mid, val);
+        else
+            return query(2 * idx + 1, mid + 1, r, val - segmentTree[2 * idx]);
+    }
+
+    void update(int idx, int l, int r, int pos) {
+        if (l == r) {
+            segmentTree[idx] = 0;
+            return;
+        }
+
+        int mid = l + (r - l) / 2;
+
+        if (pos <= mid)
+            update(2 * idx, l, mid, pos);
+        else
+            update(2 * idx + 1, mid + 1, r, pos);
+
+        segmentTree[idx] = segmentTree[2 * idx] + segmentTree[2 * idx + 1];
+    }
+};
+
+class Solution {
+   public:
+    vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+        int n = people.size();
+        vector<vector<int>> ans(n);
+        if (!n) return ans;
+
+        sort(people.begin(), people.end(), [&](auto& a, auto& b) {
+            if (a[0] == b[0]) return a[1] > b[1];
+            return a[0] < b[0];
+        });
+
+        SegmentTree st = SegmentTree(n);
+
+        for (auto person : people) {
+            int pos = person[1] + 1;
+            int idx = st.query(1, 0, n - 1, pos);
+            ans[idx] = person;
+            st.update(1, 0, n - 1, idx);
+        }
+
+        return ans;
+    }
+};
+
+//============== O(N^2)==============
+class Solution {  //O(n^2)
    public:
     vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
         sort(people.begin(), people.end(), [](vector<int> a, vector<int> b) {
